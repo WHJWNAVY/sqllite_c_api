@@ -1,5 +1,3 @@
-# sqllite_c_api
-```c
 #ifndef __SQL_C_H__
 #define __SQL_C_H__
 
@@ -54,8 +52,7 @@ uint32_t sql_test(sqlite3 *db, const char *tbl, sql_keyval_t *pkey);
  Output      : NULL
  Return      : Error code.
 *****************************************************************************/
-error_t sql_delete(sqlite3 *db, const char *tbl,
-                                 sql_keyval_t *pkey);
+error_t sql_delete(sqlite3 *db, const char *tbl, sql_keyval_t *pkey);
 
 /*****************************************************************************
  Name        : sql_read
@@ -67,9 +64,8 @@ error_t sql_delete(sqlite3 *db, const char *tbl,
  Output      : char *outs             : Read output string
  Return      : Error code.
 *****************************************************************************/
-error_t sql_read(sqlite3 *db, const char *tbl,
-                               sql_keyval_t *pkey, const char *etykey,
-                               char *outs);
+error_t sql_read(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
+                 const char *etykey, char *outs);
 
 /*****************************************************************************
  Name        : sql_update
@@ -78,13 +74,11 @@ error_t sql_read(sqlite3 *db, const char *tbl,
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
                sql_keyval_t *etytbl   : Field table that needs to be updated.
-               uint32_t etylen        : Field table length that needs to be updated.
- Output      : NULL.
- Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be
+updated. Output      : NULL. Return      : Error code.
 *****************************************************************************/
-error_t sql_update(sqlite3 *db, const char *tbl,
-                                 sql_keyval_t *pkey, sql_keyval_t *etytbl,
-                                 uint32_t etylen);
+error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
+                   sql_keyval_t *etytbl, uint32_t etylen);
 
 /*****************************************************************************
  Name        : sql_insert
@@ -92,12 +86,11 @@ error_t sql_update(sqlite3 *db, const char *tbl,
  Input       : sqlite3 *db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *etytbl   : Field table that needs to be insert.
-               uint32_t etylen        : Field table length that needs to be insert.
- Output      : NULL.
- Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be
+insert. Output      : NULL. Return      : Error code.
 *****************************************************************************/
-error_t sql_insert(sqlite3 *db, const char *tbl,
-                                 sql_keyval_t *etytbl, uint32_t etylen);
+error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
+                   uint32_t etylen);
 
 /*****************************************************************************
  Name        : sql_splout
@@ -107,7 +100,5 @@ error_t sql_insert(sqlite3 *db, const char *tbl,
  Return      : Error code.
 *****************************************************************************/
 uint32_t sql_splout(void *out_tbl, uint32_t tbl_hlen, uint32_t tbl_vlen,
-                           char *sql_out);
+                    char *sql_out);
 #endif
-```
-
