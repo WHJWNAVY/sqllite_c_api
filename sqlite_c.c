@@ -10,6 +10,60 @@
 #include "sql_error.h"
 #include "sqlite_c.h"
 
+char *SQL_CMD_BUFF = NULL;
+char *SQL_OUT_BUFF = NULL;
+
+static uint32_t buff_get(void) {
+#if 0
+    if (len == 0) {
+        SQL_ERROR("Invalid sql buff len!");
+        goto err;
+    }
+#else
+    uint32_t len = SQL_CMD_BUFF_LEN;
+#endif
+    if (SQL_CMD_BUFF == NULL) {
+        SQL_CMD_BUFF = (char *)malloc(len);
+        if (SQL_CMD_BUFF == NULL) {
+            SQL_ERROR("Error to malloc sql cmd buff!");
+            goto err;
+        }
+    }
+
+    if (SQL_OUT_BUFF == NULL) {
+        SQL_OUT_BUFF = (char *)malloc(len);
+        if (SQL_OUT_BUFF == NULL) {
+            SQL_ERROR("Error to malloc sql cmd buff!");
+            goto err;
+        }
+    }
+
+    return len;
+err:
+    return 0;
+}
+
+static void buff_clr(void) {
+    if (SQL_CMD_BUFF != NULL) {
+        memset(SQL_CMD_BUFF, 0, SQL_CMD_BUFF_LEN);
+    }
+
+    if (SQL_OUT_BUFF != NULL) {
+        memset(SQL_OUT_BUFF, 0, SQL_CMD_BUFF_LEN);
+    }
+}
+
+static void buff_free(void) {
+    if (SQL_CMD_BUFF) {
+        free(SQL_CMD_BUFF);
+        SQL_CMD_BUFF = NULL;
+    }
+    if (SQL_OUT_BUFF) {
+        free(SQL_OUT_BUFF);
+        SQL_OUT_BUFF = NULL;
+    }
+}
+
 void sql_free(sqlite3 *db) {
     if (db) {
         sqlite3_close(db);
@@ -32,9 +86,14 @@ sqlite3 *sql_ctx(const char *dbmane) {
         goto err;
     }
 
+    if (buff_get() == 0) {
+        goto err;
+    }
+
     return db;
 err:
     sql_free(db);
+    buff_free();
     return NULL;
 }
 
@@ -133,8 +192,12 @@ err:
 uint32_t sql_count(sqlite3 *db, const char *tbl) {
     error_t ecode = E_OK;
     uint32_t count = 0;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
-    char outs[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char outs[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
+    char *outs = SQL_OUT_BUFF;
+
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL)) {
         SQL_ERROR("Invalid Parameters");
@@ -193,9 +256,12 @@ static char *kv2str2(sql_keyval_t *keyval, char *outs) {
 uint32_t sql_test(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
     uint32_t count = 0;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
-    char outs[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char outs[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
+    char *outs = SQL_OUT_BUFF;
     char *psqls = sqls;
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL) || (pkey == NULL)) {
         SQL_ERROR("Invalid Parameters");
@@ -235,8 +301,11 @@ err:
 *****************************************************************************/
 error_t sql_delete(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
     char *psqls = sqls;
+
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL)) {
         SQL_ERROR("Invalid Parameters");
@@ -281,8 +350,11 @@ err:
 error_t sql_read(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                  const char *etykey, char *outs) {
     error_t ecode = E_OK;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
     char *psqls = sqls;
+
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL) || (outs == NULL)) {
         SQL_ERROR("Invalid Parameters");
@@ -332,8 +404,11 @@ error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                    sql_keyval_t *etytbl, uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
     char *psqls = sqls;
+
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL) || (etytbl == NULL) || (etylen == 0)) {
         SQL_ERROR("Invalid Parameters");
@@ -387,8 +462,11 @@ error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
                    uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;
-    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    // char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char *sqls = SQL_CMD_BUFF;
     char *psqls = sqls;
+
+    buff_clr();
 
     if ((db == NULL) || (tbl == NULL) || (etytbl == NULL) || (etylen == 0)) {
         SQL_ERROR("Invalid Parameters");
