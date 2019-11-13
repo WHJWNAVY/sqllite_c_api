@@ -133,8 +133,8 @@ err:
 uint32_t sql_count(sqlite3 *db, const char *tbl) {
     error_t ecode = E_OK;
     uint32_t count = 0;
-    char sqls[500] = {0};
-    char outs[100] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char outs[SQL_CMD_BUFF_LEN] = {0};
 
     if ((db == NULL) || (tbl == NULL)) {
         SQL_ERROR("Invalid Parameters");
@@ -193,8 +193,8 @@ static char *kv2str2(sql_keyval_t *keyval, char *outs) {
 uint32_t sql_test(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
     uint32_t count = 0;
-    char sqls[500] = {0};
-    char outs[100] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
+    char outs[SQL_CMD_BUFF_LEN] = {0};
     char *psqls = sqls;
 
     if ((db == NULL) || (tbl == NULL) || (pkey == NULL)) {
@@ -235,7 +235,7 @@ err:
 *****************************************************************************/
 error_t sql_delete(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
-    char sqls[500] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
     char *psqls = sqls;
 
     if ((db == NULL) || (tbl == NULL)) {
@@ -281,7 +281,7 @@ err:
 error_t sql_read(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                  const char *etykey, char *outs) {
     error_t ecode = E_OK;
-    char sqls[500] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
     char *psqls = sqls;
 
     if ((db == NULL) || (tbl == NULL) || (outs == NULL)) {
@@ -332,7 +332,7 @@ error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                    sql_keyval_t *etytbl, uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;
-    char sqls[500] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
     char *psqls = sqls;
 
     if ((db == NULL) || (tbl == NULL) || (etytbl == NULL) || (etylen == 0)) {
@@ -387,7 +387,7 @@ error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
                    uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;
-    char sqls[500] = {0};
+    char sqls[SQL_CMD_BUFF_LEN] = {0};
     char *psqls = sqls;
 
     if ((db == NULL) || (tbl == NULL) || (etytbl == NULL) || (etylen == 0)) {

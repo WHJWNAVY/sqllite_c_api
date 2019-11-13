@@ -5,6 +5,8 @@
 
 #include "sql_error.h"
 
+#define SQL_CMD_BUFF_LEN  500
+
 typedef enum {
     SQL_KEYVAL_TYPE_INT = 0,
     SQL_KEYVAL_TYPE_TEXT,
