@@ -113,7 +113,7 @@ error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
                    uint32_t etylen);
 ```
 
-## sql_insert
+## sql_splout
 
 ```c
 /*****************************************************************************
