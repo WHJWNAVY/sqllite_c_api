@@ -65,6 +65,7 @@ static void buff_free(void) {
 }
 
 void sql_free(sqlite3 *db) {
+    buff_free();
     if (db) {
         sqlite3_close(db);
         db = NULL;
@@ -93,7 +94,6 @@ sqlite3 *sql_ctx(const char *dbmane) {
     return db;
 err:
     sql_free(db);
-    buff_free();
     return NULL;
 }
 
