@@ -10,18 +10,14 @@
 #include "sql_error.h"
 #include "sqlite_c.h"
 
+#define SQL_BUFF_USE_MALLOC  0
+
+#if SQL_BUFF_USE_MALLOC
 char *SQL_CMD_BUFF = NULL;
 char *SQL_OUT_BUFF = NULL;
 
 static uint32_t buff_get(void) {
-#if 0
-    if (len == 0) {
-        SQL_ERROR("Invalid sql buff len!");
-        goto err;
-    }
-#else
     uint32_t len = SQL_CMD_BUFF_LEN;
-#endif
     if (SQL_CMD_BUFF == NULL) {
         SQL_CMD_BUFF = (char *)malloc(len);
         if (SQL_CMD_BUFF == NULL) {
@@ -63,9 +59,20 @@ static void buff_free(void) {
         SQL_OUT_BUFF = NULL;
     }
 }
+#else
+char SQL_CMD_BUFF[SQL_CMD_BUFF_LEN] = {0};
+char SQL_OUT_BUFF[SQL_CMD_BUFF_LEN] = {0};
+
+static void buff_clr(void) {
+    memset(SQL_CMD_BUFF, 0, SQL_CMD_BUFF_LEN);
+    memset(SQL_OUT_BUFF, 0, SQL_CMD_BUFF_LEN);
+}
+#endif
 
 void sql_free(sqlite3 *db) {
+#if SQL_BUFF_USE_MALLOC
     buff_free();
+#endif
     if (db) {
         sqlite3_close(db);
         db = NULL;
@@ -87,10 +94,11 @@ sqlite3 *sql_ctx(const char *dbmane) {
         goto err;
     }
 
+#if SQL_BUFF_USE_MALLOC
     if (buff_get() == 0) {
         goto err;
     }
-
+#endif
     return db;
 err:
     sql_free(db);
@@ -105,7 +113,7 @@ static int sql_callback(void *sql_out, int argc, char **argv,
     uint32_t i = 0;
     char *out = (char *)sql_out;
     for (i = 0; i < argc; i++) {
-        SQL_DEBUG("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
+        // SQL_DEBUG("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
         sprintf(out, "%s",
                 argv[i] ? argv[i] : " "); // Replace empty data with spaces
         out += strlen(out);

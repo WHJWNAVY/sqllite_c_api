@@ -191,14 +191,17 @@ int main(int argc, char *argv[]) {
     rc = sql_test(db, HOMEDB_DEVICES_TABLE, &home_devkey);
     SQL_DEBUG("Test Table %s [%d]", HOMEDB_DEVICES_TABLE, rc);
 
-    memset(sql_out, 0, HOMEDB_VALUE_LEN);
-    rc = sql_readi(db, HOMEDB_DEVICES_TABLE, 2, NULL, sql_out);
-    if (rc) {
-        SQL_ERROR("Error to read line %d", 2);
-        goto err;
-    }
+    num = sql_count(db, HOMEDB_DEVICES_TABLE);
+    for (idx = 0; idx < num; idx++) {
+        memset(sql_out, 0, HOMEDB_VALUE_LEN);
+        rc = sql_readi(db, HOMEDB_DEVICES_TABLE, idx, NULL, sql_out);
+        if (rc) {
+            SQL_ERROR("Error to read line %d", idx);
+            goto err;
+        }
 
-    SQL_DEBUG("Read Line[%d] = [%s]", 2, sql_out);
+        SQL_DEBUG("Read Line[%d] = [%s]", idx, sql_out);
+    }
 err:
     sql_free(db);
     return 0;
