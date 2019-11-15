@@ -105,7 +105,8 @@ error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
  Input       : sqlite3 *db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *etytbl   : Field table that needs to be insert.
-               uint32_t etylen        : Field table length that needs to be insert. Output      : NULL. 
+               uint32_t etylen        : Field table length that needs to be insert.
+Output      : NULL. 
 Return      : Error code.
 *****************************************************************************/
 error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
