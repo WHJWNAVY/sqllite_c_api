@@ -10,8 +10,6 @@
 #include "sql_error.h"
 #include "sqlite_c.h"
 
-#define SQL_BUFF_USE_MALLOC  0
-
 #if SQL_BUFF_USE_MALLOC
 char *SQL_CMD_BUFF = NULL;
 char *SQL_OUT_BUFF = NULL;
@@ -449,8 +447,9 @@ err:
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
                sql_keyval_t *etytbl   : Field table that needs to be updated.
-               uint32_t etylen        : Field table length that needs to be
-updated. Output      : NULL. Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be updated. 
+Output      : NULL. 
+Return      : Error code.
 *****************************************************************************/
 error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                    sql_keyval_t *etytbl, uint32_t etylen) {
@@ -507,8 +506,9 @@ err:
  Input       : sqlite3 *db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *etytbl   : Field table that needs to be insert.
-               uint32_t etylen        : Field table length that needs to be
-insert. Output      : NULL. Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be insert. 
+Output      : NULL. 
+Return      : Error code.
 *****************************************************************************/
 error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
                    uint32_t etylen) {
