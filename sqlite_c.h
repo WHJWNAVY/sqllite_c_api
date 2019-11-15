@@ -5,7 +5,7 @@
 
 #include "sql_error.h"
 
-#define SQL_CMD_BUFF_LEN  500
+#define SQL_CMD_BUFF_LEN 500
 
 typedef enum {
     SQL_KEYVAL_TYPE_INT = 0,
@@ -68,6 +68,19 @@ error_t sql_delete(sqlite3 *db, const char *tbl, sql_keyval_t *pkey);
 *****************************************************************************/
 error_t sql_read(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
                  const char *etykey, char *outs);
+
+/*****************************************************************************
+ Name        : sql_readi
+ Description : Read the specified entry line in the table.
+ Input       : sqlite3 *db            : sqlite context.
+               const char *tbl        : table name.
+               homedb_keyval_t *pkey  : Primary key and value of this table.
+               const char *etykey     : Specified field of table entry.
+ Output      : char *outs             : Read output string
+ Return      : Error code.
+*****************************************************************************/
+error_t sql_readi(sqlite3 *db, const char *tbl, uint32_t line,
+                  const char *etykey, char *outs);
 
 /*****************************************************************************
  Name        : sql_update

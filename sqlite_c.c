@@ -391,6 +391,50 @@ err:
 }
 
 /*****************************************************************************
+ Name        : mercku_sql_readi
+ Description : Read the specified entry line in the table.
+ Input       : sqlite3 *db            : sqlite context.
+               const char *tbl        : table name.
+               homedb_keyval_t *pkey  : Primary key and value of this table.
+               const char *etykey     : Specified field of table entry.
+ Output      : char *outs             : Read output string
+ Return      : Error code.
+*****************************************************************************/
+error_t sql_readi(sqlite3 *db, const char *tbl, uint32_t line,
+                  const char *etykey, char *outs) {
+    error_t ecode = E_OK;
+    char *sqls = SQL_CMD_BUFF;
+    char *psqls = sqls;
+
+    buff_clr();
+
+    if ((db == NULL) || (tbl == NULL) || (outs == NULL)) {
+        SQL_ERROR("Invalid Parameters");
+        ecode = E_BAD_REQ;
+        goto err;
+    }
+
+    if (etykey == NULL) {
+        sprintf(psqls, "SELECT * FROM %s ", tbl);
+    } else {
+        sprintf(psqls, "SELECT %s FROM %s ", etykey, tbl);
+    }
+    psqls += strlen(psqls);
+
+    sprintf(psqls, "LIMIT 1 OFFSET %d;", line);
+    psqls += strlen(psqls);
+
+    ecode = sql_get(db, sqls, outs);
+    if (ecode != E_OK) {
+        SQL_ERROR("Error To Read Table [%s] line[%d]", tbl, line);
+        goto err;
+    }
+    ecode = E_OK;
+err:
+    return ecode;
+}
+
+/*****************************************************************************
  Name        : sql_update
  Description : Update the specified entry in the table.
  Input       : sqlite3 *db            : sqlite context.

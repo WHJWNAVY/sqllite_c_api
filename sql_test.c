@@ -31,7 +31,7 @@
 #define HOMEDB_DEVICES_ENTRY_UPTIME "UPTIME"
 #define HOMEDB_DEVICES_ENTRY_EXTEND "EXTEND"
 
-#define HOMEDB_VALUE_LEN 100
+#define HOMEDB_VALUE_LEN 500
 
 typedef enum {
     HOME_ENTRY_ID = 0,
@@ -43,7 +43,8 @@ typedef enum {
 } homedb_home_entry_e;
 
 typedef enum {
-    DEVICES_ENTRY_SN = 0,
+    DEVICES_ENTRY_ID = 0,
+    DEVICES_ENTRY_SN,
     DEVICES_ENTRY_NAME,
     DEVICES_ENTRY_MAC_2G,
     DEVICES_ENTRY_MAC_5G,
@@ -64,7 +65,7 @@ int main(int argc, char *argv[]) {
     int rc = 0;
     uint32_t idx = 0;
     uint32_t num = 0;
-    char sql_out[512] = {0};
+    char sql_out[HOMEDB_VALUE_LEN] = {0};
     char out_tbl[DEVICES_ENTRY_MAX][HOMEDB_VALUE_LEN] = {0};
 
     sql_keyval_t home_devkey = {0};
@@ -189,6 +190,15 @@ int main(int argc, char *argv[]) {
     home_devkey.valtyp = SQL_KEYVAL_TYPE_TEXT;
     rc = sql_test(db, HOMEDB_DEVICES_TABLE, &home_devkey);
     SQL_DEBUG("Test Table %s [%d]", HOMEDB_DEVICES_TABLE, rc);
+
+    memset(sql_out, 0, HOMEDB_VALUE_LEN);
+    rc = sql_readi(db, HOMEDB_DEVICES_TABLE, 2, NULL, sql_out);
+    if (rc) {
+        SQL_ERROR("Error to read line %d", 2);
+        goto err;
+    }
+
+    SQL_DEBUG("Read Line[%d] = [%s]", 2, sql_out);
 err:
     sql_free(db);
     return 0;
