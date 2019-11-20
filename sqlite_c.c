@@ -67,7 +67,7 @@ static void buff_clr(void) {
 }
 #endif
 
-void sql_free(sqlite3 *db) {
+void sql_free(sqlctx_t db) {
 #if SQL_BUFF_USE_MALLOC
     buff_free();
 #endif
@@ -77,9 +77,9 @@ void sql_free(sqlite3 *db) {
     }
 }
 
-sqlite3 *sql_ctx(const char *dbmane) {
+sqlctx_t sql_ctx(const char *dbmane) {
     int rc = 0;
-    sqlite3 *db = NULL;
+    sqlctx_t db = NULL;
     if ((dbmane == NULL) || (strlen(dbmane) == 0)) {
         SQL_ERROR("Invalid Parameters");
         goto err;
@@ -128,7 +128,7 @@ static int sql_callback(void *sql_out, int argc, char **argv,
  * only the last record will be saved to outs, and the previous results
  * will be overwritten later.
  */
-error_t sql_get(sqlite3 *db, const char *sql, char *outs) {
+error_t sql_get(sqlctx_t db, const char *sql, char *outs) {
     int32_t rc = 0;
     char *zErrMsg = NULL;
     error_t ecode = E_OK;
@@ -161,7 +161,7 @@ err:
     return ecode;
 }
 
-error_t sql_set(sqlite3 *db, const char *sql) {
+error_t sql_set(sqlctx_t db, const char *sql) {
     int32_t rc = 0;
     char *zErrMsg = NULL;
     error_t ecode = E_OK;
@@ -190,12 +190,12 @@ err:
 /*****************************************************************************
  Name        : sql_count
  Description : Get the number of entries in the specified table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
  Output      : NULL
  Return      : The number of entries in the specified table.
 *****************************************************************************/
-uint32_t sql_count(sqlite3 *db, const char *tbl) {
+uint32_t sql_count(sqlctx_t db, const char *tbl) {
     error_t ecode = E_OK;
     uint32_t count = 0;
     // char sqls[SQL_CMD_BUFF_LEN] = {0};
@@ -253,13 +253,13 @@ static char *kv2str2(sql_keyval_t *keyval, char *outs) {
 /*****************************************************************************
  Name        : sql_test
  Description : Determine if the specified entry exists in the table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
  Output      : NULL
  Return      : Non-zero for Existence / Zero for Nonexistence
 *****************************************************************************/
-uint32_t sql_test(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
+uint32_t sql_test(sqlctx_t db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
     uint32_t count = 0;
     // char sqls[SQL_CMD_BUFF_LEN] = {0};
@@ -299,13 +299,13 @@ err:
 /*****************************************************************************
  Name        : sql_delete
  Description : Delete the specified entry in the table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
  Output      : NULL
  Return      : Error code.
 *****************************************************************************/
-error_t sql_delete(sqlite3 *db, const char *tbl, sql_keyval_t *pkey) {
+error_t sql_delete(sqlctx_t db, const char *tbl, sql_keyval_t *pkey) {
     error_t ecode = E_OK;
     // char sqls[SQL_CMD_BUFF_LEN] = {0};
     char *sqls = SQL_CMD_BUFF;
@@ -346,14 +346,14 @@ err:
 /*****************************************************************************
  Name        : sql_read
  Description : Read the specified entry in the table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
                const char *etykey     : Specified field of table entry.
  Output      : char *outs             : Read output string
  Return      : Error code.
 *****************************************************************************/
-error_t sql_read(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
+error_t sql_read(sqlctx_t db, const char *tbl, sql_keyval_t *pkey,
                  const char *etykey, char *outs) {
     error_t ecode = E_OK;
     // char sqls[SQL_CMD_BUFF_LEN] = {0};
@@ -399,14 +399,14 @@ err:
 /*****************************************************************************
  Name        : mercku_sql_readi
  Description : Read the specified entry line in the table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                homedb_keyval_t *pkey  : Primary key and value of this table.
                const char *etykey     : Specified field of table entry.
  Output      : char *outs             : Read output string
  Return      : Error code.
 *****************************************************************************/
-error_t sql_readi(sqlite3 *db, const char *tbl, uint32_t line,
+error_t sql_readi(sqlctx_t db, const char *tbl, uint32_t line,
                   const char *etykey, char *outs) {
     error_t ecode = E_OK;
     char *sqls = SQL_CMD_BUFF;
@@ -443,15 +443,14 @@ err:
 /*****************************************************************************
  Name        : sql_update
  Description : Update the specified entry in the table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *pkey     : Primary key and value of this table.
                sql_keyval_t *etytbl   : Field table that needs to be updated.
-               uint32_t etylen        : Field table length that needs to be updated. 
-Output      : NULL. 
-Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be
+updated. Output      : NULL. Return      : Error code.
 *****************************************************************************/
-error_t sql_update(sqlite3 *db, const char *tbl, sql_keyval_t *pkey,
+error_t sql_update(sqlctx_t db, const char *tbl, sql_keyval_t *pkey,
                    sql_keyval_t *etytbl, uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;
@@ -503,14 +502,13 @@ err:
 /*****************************************************************************
  Name        : sql_insert
  Description : Insert entry to the specified table.
- Input       : sqlite3 *db            : sqlite context.
+ Input       : sqlctx_t db            : sqlite context.
                const char *tbl        : table name.
                sql_keyval_t *etytbl   : Field table that needs to be insert.
-               uint32_t etylen        : Field table length that needs to be insert. 
-Output      : NULL. 
-Return      : Error code.
+               uint32_t etylen        : Field table length that needs to be
+insert. Output      : NULL. Return      : Error code.
 *****************************************************************************/
-error_t sql_insert(sqlite3 *db, const char *tbl, sql_keyval_t *etytbl,
+error_t sql_insert(sqlctx_t db, const char *tbl, sql_keyval_t *etytbl,
                    uint32_t etylen) {
     uint32_t idx = 0;
     error_t ecode = E_OK;

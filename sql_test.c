@@ -61,7 +61,7 @@ typedef enum {
 } homedb_devices_entry_e;
 
 int main(int argc, char *argv[]) {
-    sqlite3 *db;
+    sqlctx_t db;
     int rc = 0;
     uint32_t idx = 0;
     uint32_t num = 0;
