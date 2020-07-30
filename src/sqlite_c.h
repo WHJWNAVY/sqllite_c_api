@@ -20,7 +20,7 @@ typedef struct {
     sql_valtyp_e valtyp;
 } sql_keyval_t;
 
-typedef sqlite3* sqlctx_t;
+typedef sqlite3 *sqlctx_t;
 
 void sql_free(sqlctx_t db);
 sqlctx_t sql_ctx(const char *dbmane);

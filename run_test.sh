@@ -1,4 +1,5 @@
 #!/bin/sh
+SQL_C_TEST_PROGRAM=./bin/sqlc_test
 CUSTOMER_HW_SERIAL_NUM="018621945292157"
 MERCKU_HOME_DB_PATH="home.db"
 MERCKU_HOME_UUID=$(cat /proc/sys/kernel/random/uuid | sed 's/-//g')
@@ -26,4 +27,10 @@ mercku_homedb_create() {
     fi
 }
 
-mercku_homedb_create
+run_test() {
+    rm $MERCKU_HOME_DB_PATH
+	mercku_homedb_create
+    $SQL_C_TEST_PROGRAM
+}
+
+run_test
