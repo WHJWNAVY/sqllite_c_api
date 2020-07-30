@@ -61,3 +61,6 @@ clean:
 distclean:
 	@echo CLEAN $(CLEAN_LIST)
 	@rm -f $(DISTCLEAN_LIST)
+
+lint:
+	find ${SRC_PATH} -iname "*.[ch]" | xargs clang-format-6.0 -i

@@ -29,7 +29,7 @@ mercku_homedb_create() {
 
 run_test() {
     rm $MERCKU_HOME_DB_PATH
-	mercku_homedb_create
+    mercku_homedb_create
     $SQL_C_TEST_PROGRAM
 }
 
