@@ -586,8 +586,8 @@ uint32_t sql_splout(void *out_tbl, uint32_t tbl_hlen, uint32_t tbl_vlen,
 
     char *token = strtok(sql_out, split);
     while (token != NULL) {
-        if (*token ==
-            SQL_OUT_BLANK_CHR) { // Space indicates that the data is empty.
+        if (*token == SQL_OUT_BLANK_CHR) {
+            // Space indicates that the data is empty.
             *token = '\0';
         }
         // SQL_DEBUG("key[%d] = [%s]", wcnt, token);
