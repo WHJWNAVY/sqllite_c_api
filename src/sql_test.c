@@ -63,8 +63,8 @@ typedef enum {
 int main(int argc, char *argv[]) {
     sqlctx_t db;
     int rc = 0;
-    uint32_t idx = 0;
-    uint32_t num = 0;
+    uint32_t idx = 0, jdx = 0;
+    uint32_t num = 0, mun = 0;
     char sql_out[HOMEDB_VALUE_LEN] = {0};
     char out_tbl[DEVICES_ENTRY_MAX][HOMEDB_VALUE_LEN] = {0};
 
@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
     }
     SQL_DEBUG("readout[%s]", sql_out);
 
+    memset(out_tbl, 0, sizeof(out_tbl));
     num = sql_splout(out_tbl, DEVICES_ENTRY_MAX, HOMEDB_VALUE_LEN, sql_out);
     SQL_DEBUG("get out count=[%d]", num);
 
@@ -201,6 +202,14 @@ int main(int argc, char *argv[]) {
         }
 
         SQL_DEBUG("Read Line[%d] = [%s]", idx, sql_out);
+
+        memset(out_tbl, 0, sizeof(out_tbl));
+        mun = sql_splout(out_tbl, DEVICES_ENTRY_MAX, HOMEDB_VALUE_LEN, sql_out);
+        SQL_DEBUG("get Line[%d] out count=[%d]", idx, mun);
+
+        for (jdx = 0; jdx < mun; jdx++) {
+            SQL_DEBUG("Line[%d] tbl[%d] = [%s]", idx, jdx, out_tbl[jdx]);
+        }
     }
 err:
     sql_free(db);

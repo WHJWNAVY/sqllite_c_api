@@ -4,11 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <sqlite3.h>
 
 #include "sql_error.h"
 #include "sqlite_c.h"
+
+#define SQL_OUT_SPLIT_STR "\1"
+#define SQL_OUT_BLANK_CHR '\2'
 
 #if SQL_BUFF_USE_MALLOC
 char *SQL_CMD_BUFF = NULL;
@@ -112,11 +116,17 @@ static int sql_callback(void *sql_out, int argc, char **argv,
     char *out = (char *)sql_out;
     for (i = 0; i < argc; i++) {
         // SQL_DEBUG("%s = %s", azColName[i], argv[i] ? argv[i] : "NULL");
-        sprintf(out, "%s",
-                argv[i] ? argv[i] : " "); // Replace empty data with spaces
+        if (argv[i]) {
+            sprintf(out, "%s", argv[i]);
+        } else {
+            // Replace empty data with spaces
+            sprintf(out, "%c", SQL_OUT_BLANK_CHR);
+        }
+        // sprintf(out, "%s",
+        //        argv[i] ? argv[i] : " "); // Replace empty data with spaces
         out += strlen(out);
         if ((i + 1) < argc) {
-            sprintf(out, "%s", "|"); // Split data with '|'
+            sprintf(out, "%s", SQL_OUT_SPLIT_STR); // Split data with '|'
             out += strlen(out);
         }
     }
@@ -524,7 +534,7 @@ error_t sql_insert(sqlctx_t db, const char *tbl, sql_keyval_t *etytbl,
         goto err;
     }
 
-    sprintf(psqls, "INSERT INTO %s (", tbl);
+    sprintf(psqls, "INSERT OR REPLACE INTO %s (", tbl);
     psqls += strlen(psqls);
 
     for (idx = 0; idx < etylen; idx++) {
@@ -566,7 +576,7 @@ err:
 *****************************************************************************/
 uint32_t sql_splout(void *out_tbl, uint32_t tbl_hlen, uint32_t tbl_vlen,
                     char *sql_out) {
-    char *split = "|";
+    char *split = SQL_OUT_SPLIT_STR;
     char *outt = (char *)out_tbl;
     uint32_t wcnt = 0;
     uint32_t clen = /*SQL_VALUE_LEN*/ tbl_vlen;
@@ -577,7 +587,8 @@ uint32_t sql_splout(void *out_tbl, uint32_t tbl_hlen, uint32_t tbl_vlen,
 
     char *token = strtok(sql_out, split);
     while (token != NULL) {
-        if (*token == ' ') { // Space indicates that the data is empty.
+        if (*token ==
+            SQL_OUT_BLANK_CHR) { // Space indicates that the data is empty.
             *token = '\0';
         }
         // SQL_DEBUG("key[%d] = [%s]", wcnt, token);
