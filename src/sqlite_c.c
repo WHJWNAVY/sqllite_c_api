@@ -122,8 +122,7 @@ static int sql_callback(void *sql_out, int argc, char **argv,
             // Replace empty data with spaces
             sprintf(out, "%c", SQL_OUT_BLANK_CHR);
         }
-        // sprintf(out, "%s",
-        //        argv[i] ? argv[i] : " "); // Replace empty data with spaces
+
         out += strlen(out);
         if ((i + 1) < argc) {
             sprintf(out, "%s", SQL_OUT_SPLIT_STR); // Split data with '|'
